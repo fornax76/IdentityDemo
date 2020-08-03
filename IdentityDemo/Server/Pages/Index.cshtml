@@ -1,0 +1,18 @@
+﻿@page
+@model IdentityDemo.Server.Pages.IndexModel
+
+@using Microsoft.AspNetCore.Identity
+@using IdentityDemo.Server.Models
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+<h1>Index</h1>
+
+<h2>@User.Identity.IsAuthenticated</h2>
+

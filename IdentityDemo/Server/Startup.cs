@@ -14,16 +14,19 @@ using System.Linq;
 using IdentityDemo.Server.Data;
 using IdentityDemo.Server.Models;
 using System.IdentityModel.Tokens.Jwt;
+using Microsoft.AspNetCore.DataProtection;
+using System.IO;
 
 namespace IdentityDemo.Server
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IWebHostEnvironment hostingEnvironment)
         {
             Configuration = configuration;
+            this.hostingEnvironment = hostingEnvironment;
         }
-
+        private IWebHostEnvironment hostingEnvironment { get; set; }
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -50,6 +53,18 @@ namespace IdentityDemo.Server
 
             services.AddAuthentication()
                 .AddIdentityServerJwt();
+
+
+            var keysFolder = Path.Combine(hostingEnvironment.ContentRootPath, "KeyRing");
+            services.AddDataProtection()
+                .PersistKeysToFileSystem(new DirectoryInfo(keysFolder))
+                .SetApplicationName("MY_APP_NAME");
+
+            services.ConfigureApplicationCookie(options => {
+                options.Cookie.Name = ".AspNet.SharedCookie";
+                options.Cookie.Path = "/";
+            });
+
 
             services.AddControllersWithViews();
             services.AddRazorPages();
